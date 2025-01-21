@@ -7,10 +7,12 @@
 // } from 'https://cdn.esm.sh/react-leaflet'
 // import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvent } from "react-leaflet"
 
 
 import 'leaflet/dist/leaflet.css'
+import { useEffect, useRef } from "react"
+import { LatLngBoundsExpression } from "leaflet"
 
 const facilities = [
   {
@@ -31,18 +33,48 @@ const facilities = [
   },
 ]
 
-const KenyaMap = () => {
+const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility}) => {
+  const mapRef = useRef<L.Map | null>(null)
+  const kenyaBounds: LatLngBoundsExpression = [
+    [-4.675, 33.909], // Southwest corner
+    [5.508, 41.899], // Northeast corner
+  ]
+
+  useEffect(() => {
+    if (selectedFacility && mapRef.current) {
+      const { latitude, longitude } = selectedFacility
+      mapRef.current.flyTo([latitude, longitude], 12) // Adjust zoom level as needed
+    }
+  }, [selectedFacility])
+
+  // Component to control the map behavior
+  const MapController = () => {
+    const map = useMap()
+
+    useEffect(() => {
+      if (selectedFacility) {
+        const { latitude, longitude } = selectedFacility
+        map.flyTo([latitude, longitude], 12) // Focus on the selected facility
+      }
+    }, [selectedFacility, map])
+
+    return null // This component doesn't render anything
+  }
+
   return (
     <MapContainer
       center={[-1.286389, 36.817223]} // Nairobi's coordinates as the default center
       zoom={7}
       style={{ height: '100vh', width: '100%' }}
-    //   bounds={[-1.286389, 36.817223]}
+      //   whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+      maxBounds={kenyaBounds}
+      maxBoundsViscosity={1.0}
     >
       <TileLayer
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
+      <MapController />
       {facilities.map((facility) => (
         <Marker
           key={facility.id}
@@ -57,8 +89,16 @@ const KenyaMap = () => {
           </Popup>
         </Marker>
       ))}
+      <MyComponent />
     </MapContainer>
   )
 }
 
 export default KenyaMap
+
+function MyComponent() {
+  const map = useMapEvent('click', () => {
+    map.setView([50.5, 30.5], map.getZoom())
+  })
+  return null
+}
