@@ -1,5 +1,5 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
+import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,4 +70,4 @@ const TopBar: React.FC = () => {
   )
 }
 
-export default TopBar
+export default TopBar;
