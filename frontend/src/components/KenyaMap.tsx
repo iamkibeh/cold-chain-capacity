@@ -8,11 +8,10 @@
 // import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvent } from "react-leaflet"
-
-
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from "react"
 import { LatLngBoundsExpression } from "leaflet"
+
 
 const facilities = [
   {
@@ -75,6 +74,7 @@ const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       <MapController />
+
       {facilities.map((facility) => (
         <Marker
           key={facility.id}
