@@ -10,7 +10,19 @@
 
 export default {
   async fetch(request, env, ctx) {
-    const coldChainData = [
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
+    };
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: corsHeaders,
+        status: 204
+      });
+    }
+    let coldChainData = [
       {
         County: "Turkana County",
         "Sub.county": "Aroo Sub County",
@@ -9314,31 +9326,95 @@ export default {
         code: "35BN"
       }
     ];
-    // Add CORS headers
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
-    };
+    const url = new URL(request.url);
+    const method = request.method;
 
-    if (request.method === "OPTIONS") {
-      // Handle preflight request
-      return new Response(null, {
-        headers: corsHeaders,
-        status: 204
+    try {
+      switch (method) {
+        case "GET": {
+          return new Response(JSON.stringify(coldChainData, null, 2), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        case "POST": {
+          const newData = await request.json();
+          coldChainData.push(newData);
+          return new Response(
+            JSON.stringify({ message: "Resource added", newData }, null, 2),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 201
+            }
+          );
+        }
+
+        case "PUT":
+        case "PATCH": {
+          const code = url.searchParams.get("code");
+          const updatedData = await request.json();
+
+          const index = coldChainData.findIndex(item => item.code === code);
+          if (index === -1) {
+            return new Response(
+              JSON.stringify({ error: "Resource not found" }, null, 2),
+              {
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+                status: 404
+              }
+            );
+          }
+
+          coldChainData[index] = { ...coldChainData[index], ...updatedData };
+          return new Response(
+            JSON.stringify(
+              { message: "Resource updated", updatedData },
+              null,
+              2
+            ),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 200
+            }
+          );
+        }
+
+        case "DELETE": {
+          const code = url.searchParams.get("code");
+
+          const index = coldChainData.findIndex(item => item.code === code);
+          if (index === -1) {
+            return new Response(
+              JSON.stringify({ error: "Resource not found" }, null, 2),
+              {
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+                status: 404
+              }
+            );
+          }
+
+          coldChainData.splice(index, 1);
+          return new Response(
+            JSON.stringify({ message: "Resource deleted" }, null, 2),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 200
+            }
+          );
+        }
+
+        default: {
+          return new Response("Method Not Allowed", {
+            status: 405,
+            headers: corsHeaders
+          });
+        }
+      }
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error.message }, null, 2), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500
       });
     }
-
-    // Handle GET requests
-    if (request.method === "GET") {
-      return new Response(JSON.stringify(coldChainData, null, 2), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
-    // Handle unsupported methods
-    return new Response("Method Not Allowed", {
-      status: 405,
-      headers: corsHeaders
-    });
   }
 };
