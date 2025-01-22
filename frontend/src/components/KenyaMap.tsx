@@ -7,10 +7,12 @@
 // } from 'https://cdn.esm.sh/react-leaflet'
 // import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvent } from "react-leaflet"
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvent, GeoJSON } from "react-leaflet"
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from "react"
 import { LatLngBoundsExpression } from "leaflet"
+import marker from '../assets/images/medicine.png'
+
 
 
 const facilities = [
@@ -60,11 +62,22 @@ const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility
     return null // This component doesn't render anything
   }
 
+  const mapStyle = { height: '100vh', width: '100%', margin: '0 auto' }
+
+  //marker style
+  const myIcon = new L.Icon({
+    iconUrl: marker,
+    iconRetinaUrl: marker,
+    popupAnchor: [0, 0],
+    iconSize: [12, 12],
+  })
+
   return (
     <MapContainer
-      center={[-1.286389, 36.817223]} // Nairobi's coordinates as the default center
-      zoom={7}
-      style={{ height: '100vh', width: '100%' }}
+      center={[1.286389, 38.817223]} // Nairobi's coordinates as the default center
+      zoom={6}
+      style={mapStyle}
+    //   scrollWheelZoom={true}
       //   whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
       maxBounds={kenyaBounds}
       maxBoundsViscosity={1.0}
@@ -73,12 +86,18 @@ const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
+      {/* <TileLayer
+        attribution='Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'
+      /> */}
       <MapController />
 
+      {/* <GeoJSON data={facilities}/> */}
       {facilities.map((facility) => (
         <Marker
           key={facility.id}
           position={[facility.latitude, facility.longitude]}
+          icon={myIcon}
         >
           <Popup>
             <strong>{facility.name}</strong>
