@@ -20,6 +20,7 @@ import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 import { LatLngBoundsExpression } from 'leaflet'
 import marker from '../assets/images/medicine.png'
+import blueMarker from '../assets/images/facility-logo.jpeg'
 import { Facility } from '@/types/FacilityData'
 
 const facilities = [
@@ -60,7 +61,6 @@ const KenyaMap: React.FC<{
     }
   })
 
-
   useEffect(() => {
     if (selectedFacility && mapRef.current) {
       const { latitude, longitude } = facilitiesData.find(
@@ -98,6 +98,15 @@ const KenyaMap: React.FC<{
     iconUrl: marker,
     iconRetinaUrl: marker,
     popupAnchor: [0, 0],
+    iconAnchor: [12, 41],
+    iconSize: [12, 12],
+  })
+
+  const blueMarkerIcon = new L.Icon({
+    iconUrl: blueMarker,
+    iconRetinaUrl: blueMarker,
+    popupAnchor: [0, 0],
+    iconAnchor: [12, 41],
     iconSize: [12, 12],
   })
 
@@ -107,7 +116,7 @@ const KenyaMap: React.FC<{
       zoom={6}
       style={mapStyle}
       //   scrollWheelZoom={true}
-        // whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+      // whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
       maxBounds={kenyaBounds}
       maxBoundsViscosity={1.0}
     >
@@ -122,18 +131,33 @@ const KenyaMap: React.FC<{
       <MapController />
 
       {/* <GeoJSON data={facilities}/> */}
-      {facilitiesData.map((facility) => (
+      {facilitiesData.map((facility, ind) => (
         <Marker
-          key={facility.code}
-          position={[parseFloat(facility.latitude), parseFloat(facility.longitude)]}
-          icon={myIcon}
+          key={ind}
+          position={[
+            parseFloat(facility.latitude),
+            parseFloat(facility.longitude),
+          ]}
+          icon={parseFloat(facility.Unutilized_Functional_Capacity || '0') < 0
+            ? myIcon
+            : blueMarkerIcon
+          }
         >
           <Popup>
             <strong>{facility.Facility_Name}</strong>
             <br />
-            Capacity: {facility.capacity_in_litres} liters
+            Total Capacity: {facility.Total_Capacity} liters
             <br />
-            Available Space: {facility.Available_Cold_Boxes} liters
+            Required Capacity:{' '}
+            {facility.Required_vaccine_capacity_each_month_in_litres} liters
+            <br />
+            Unutilized Capacity: {facility.Unutilized_Functional_Capacity}{' '}
+            liters
+            <br /> Children under 1 year:{' '}
+            {facility.Children_under_1_population_monthly_target}
+            <br /> 10 year old girls population:{' '}
+            {facility['10 year old girls population - monthly target']}
+            <br />
           </Popup>
         </Marker>
       ))}

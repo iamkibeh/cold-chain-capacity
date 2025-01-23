@@ -1,19 +1,20 @@
 export interface Facility {
+    Facility_Name: string;
+    Children_under_1_population_monthly_target: string;
+    "10 year old girls population - monthly target": string;
+    Required_vaccine_capacity_each_month_in_litres: string;
+    Total_Capacity: string;
+    Unutilized_Functional_Capacity: string;
     County: string;
     "Sub.county": string;
     Ward: string;
-    Facility_Name: string;
-    latitude: string;
-    longitude: string;
-    capacity_in_litres: string;
-   "DHIS.ID"?: string; // Optional properties
+    "DHIS.ID"?: string; // Optional fields
     Ownership?: string;
     Operational_Status?: string;
     Currently_Offering_EPI_Services?: string;
-    Total_Catchment_Population_2023?: string;
     Live_Births_Population_2023?: string;
     Surviving_Infants_Population_2023?: string;
-    KPLC_Electricity_Availability?: string;
+    "KPLC.Electricity.Availability..More.than.8.hrs.day..Yes.No."?: string;
     manufacturer?: string;
     make?: string;
     X_in_Service?: string;
@@ -31,5 +32,6 @@ export interface Facility {
     No_of_Staff_Trained_on_EPI?: string;
     Cadre_of_Staff_Trained?: string;
     Remarks?: string;
-    code?: string;
+    latitude: string;
+    longitude: string;
 }

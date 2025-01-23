@@ -39,7 +39,7 @@ export default function Root() {
             </div>
           </div>
           {/* Scrollable container with a fixed height */}
-          <div className='p-4 overflow-y-auto'>
+          <div className='p-4 overflow-y-auto max-h-full'>
             <FilteredDropdowns
               facilitiesData={facilitiesData}
               selectedCounty={selectedCounty}
