@@ -1,11 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import KenyaMap from './components/KenyaMap'
 import TopBar from './components/TopBar'
 import { FaSearch } from 'react-icons/fa'
 import FilteredDropdowns from './components/FilteredDropdown'
+import { Facility } from './types/FacilityData'
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('')
+
+   const [facilitiesData, setFacilitiesData] = useState<Facility[]>([])
+    const [selectedCounty, setSelectedCounty] = useState<string | null>(null)
+    const [selectedSubCounty, setSelectedSubCounty] = useState<string | null>(
+      null
+    )
+    const [selectedFacility, setSelectedFacility] = useState<string | null>(null)
+  
+    useEffect(() => {
+      const fetchFacilitiesData = async () => {
+        const response = await fetch(
+          'https://coldchain-data-worker.prestonosoro56.workers.dev/'
+        )
+        const data = await response.json()
+        setFacilitiesData(data)
+      }
+      fetchFacilitiesData()
+    }, [])
+
+    
   return (
     <>
       <TopBar />
@@ -27,11 +48,19 @@ function App() {
           </div>
           {/* Scrollable container with a fixed height */}
           <div className='p-4 max-h-96 overflow-y-auto'>
-            <FilteredDropdowns />
+            <FilteredDropdowns
+              facilitiesData={facilitiesData}
+              selectedCounty={selectedCounty}
+              setSelectedCounty={setSelectedCounty}
+              selectedSubCounty={selectedSubCounty}
+              setSelectedSubCounty={setSelectedSubCounty}
+              selectedFacility={selectedFacility}
+              setSelectedFacility={setSelectedFacility}
+            />
           </div>
         </div>
         <div className='max-w-xl mx-auto flex-grow'>
-          <KenyaMap selectedFacility={null} />
+          <KenyaMap facilitiesData={facilitiesData} selectedFacility={selectedFacility} />
         </div>
       </div>
     </>

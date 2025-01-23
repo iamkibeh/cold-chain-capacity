@@ -1,25 +1,42 @@
 import { Facility } from '@/types/FacilityData'
-import { useEffect, useState } from 'react'
 
-const FilteredDropdowns = () => {
-  const [facilitiesData, setFacilitiesData] = useState<Facility[]>([])
-  const [selectedCounty, setSelectedCounty] = useState<string | null>(null)
-  const [selectedSubCounty, setSelectedSubCounty] = useState<string | null>(
-    null
-  )
-  const [selectedFacility, setSelectedFacility] = useState<string | null>(null)
+const FilteredDropdowns: React.FC<{
+  facilitiesData: Facility[]
+  selectedCounty: string | null
+  setSelectedCounty: (county: string) => void
+  selectedSubCounty: string | null
+  setSelectedSubCounty: (subCounty: string | null) => void
+  selectedFacility: string | null
+  setSelectedFacility: (facility: string | null) => void
+}> = (
+  {
+    facilitiesData,
+    selectedCounty,
+    setSelectedCounty,
+    selectedSubCounty,
+    setSelectedSubCounty,
+    selectedFacility,
+    setSelectedFacility,
+  }
+) => {
+  // const [facilitiesData, setFacilitiesData] = useState<Facility[]>([])
+  // const [selectedCounty, setSelectedCounty] = useState<string | null>(null)
+  // const [selectedSubCounty, setSelectedSubCounty] = useState<string | null>(
+  //   null
+  // )
+  // const [selectedFacility, setSelectedFacility] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchFacilitiesData = async () => {
-      const response = await fetch(
-        'https://coldchain-data-worker.prestonosoro56.workers.dev/'
-      )
-      const data = await response.json()
-      setFacilitiesData(data)
-      console.log(data)
-    }
-    fetchFacilitiesData()
-  }, [])
+  // useEffect(() => {
+  //   const fetchFacilitiesData = async () => {
+  //     const response = await fetch(
+  //       'https://coldchain-data-worker.prestonosoro56.workers.dev/'
+  //     )
+  //     const data = await response.json()
+  //     setFacilitiesData(data)
+  //     console.log(data)
+  //   }
+  //   fetchFacilitiesData()
+  // }, [])
 
   // Get unique options for each dropdown
   const counties = Array.from(new Set(facilitiesData.map((f) => f.County)))
@@ -33,12 +50,14 @@ const FilteredDropdowns = () => {
       )
     : []
   const facilities = selectedSubCounty
-    ? facilitiesData.filter((f) => f[""] === selectedSubCounty)
+    ? facilitiesData.filter((f) => f["Sub.county"] === selectedSubCounty)
     : []
 
   const selectedFacilityDetails = facilities.find(
     (f) => f.Facility_Name === selectedFacility
   )
+
+  console.log({ selectedCounty, selectedSubCounty, selectedFacility })
 
   return (
     <div className='p-4 space-y-4'>
@@ -123,7 +142,7 @@ const FilteredDropdowns = () => {
             County: {selectedFacilityDetails.County}
           </p>
           <p className='text-sm text-gray-600'>
-            Sub-County: {selectedFacilityDetails.SubCounty}
+            Sub-County: {selectedFacilityDetails["Sub.county"]}
           </p>
           <p className='text-sm text-gray-600'>
             Capacity: {selectedFacilityDetails.capacity_in_litres} liters

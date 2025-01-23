@@ -6,7 +6,7 @@ export interface Facility {
     latitude: string;
     longitude: string;
     capacity_in_litres: string;
-    DHIS_ID?: string; // Optional properties
+   "DHIS.ID"?: string; // Optional properties
     Ownership?: string;
     Operational_Status?: string;
     Currently_Offering_EPI_Services?: string;
