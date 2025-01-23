@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React from 'react'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Home, MapPin, BarChart, Settings, MoreVertical } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
 
 const TopBar: React.FC = () => {
   return (
@@ -21,10 +22,12 @@ const TopBar: React.FC = () => {
       <nav className='flex-grow flex justify-center ml-10'>
         <ul className='topbar-menu flex space-x-8'>
           <li className='flex items-center'>
-            <Button variant='secondary' className='flex items-center'>
-              <Home className='w-5 h-5 mr-2' />
-              Overview
-            </Button>
+            <NavLink to='/'>
+              <Button variant='secondary' className='flex items-center'>
+                <Home className='w-5 h-5 mr-2' />
+                Overview
+              </Button>
+            </NavLink>
           </li>
           <li className='flex items-center'>
             <Button variant='secondary' className='flex items-center'>
@@ -33,10 +36,12 @@ const TopBar: React.FC = () => {
             </Button>
           </li>
           <li className='flex items-center'>
-            <Button variant='secondary' className='flex items-center'>
-              <BarChart className='w-5 h-5 mr-2' />
-              Analytics
-            </Button>
+            <NavLink to='/dashboard'>
+              <Button variant='secondary' className='flex items-center'>
+                <BarChart className='w-5 h-5 mr-2' />
+                Analytics
+              </Button>
+            </NavLink>
           </li>
         </ul>
       </nav>
@@ -70,4 +75,4 @@ const TopBar: React.FC = () => {
   )
 }
 
-export default TopBar;
+export default TopBar
