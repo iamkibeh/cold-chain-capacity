@@ -7,13 +7,20 @@
 // } from 'https://cdn.esm.sh/react-leaflet'
 // import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvent, GeoJSON } from "react-leaflet"
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  useMapEvent,
+  // GeoJSON,
+} from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { useEffect, useRef } from "react"
-import { LatLngBoundsExpression } from "leaflet"
+import { useEffect, useRef } from 'react'
+import { LatLngBoundsExpression } from 'leaflet'
 import marker from '../assets/images/medicine.png'
-
-
+import { Facility } from '@/types/FacilityData'
 
 const facilities = [
   {
@@ -34,18 +41,38 @@ const facilities = [
   },
 ]
 
-const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility}) => {
+const KenyaMap: React.FC<{
+  facilitiesData: Facility[]
+  selectedFacility: string | null
+}> = ({ facilitiesData, selectedFacility }) => {
   const mapRef = useRef<L.Map | null>(null)
   const kenyaBounds: LatLngBoundsExpression = [
     [-4.675, 33.909], // Southwest corner
     [5.508, 41.899], // Northeast corner
   ]
 
+  // console.log({facilitiesData});
+  // console.log({selectedFacility});
+  // console.log('Facilities data sample:', facilitiesData.slice(0, 10))
+  facilitiesData.forEach((facility) => {
+    if (!facility.latitude || !facility.longitude) {
+      console.warn('Missing coordinates for:', facility)
+    }
+  })
+
+
   useEffect(() => {
     if (selectedFacility && mapRef.current) {
-      const { latitude, longitude } = selectedFacility
-      mapRef.current.flyTo([latitude, longitude], 12) // Adjust zoom level as needed
+      const { latitude, longitude } = facilitiesData.find(
+        // Find the selected facility's coordinates
+        (facility: Facility) => facility.Facility_Name === selectedFacility
+      )!
+      mapRef.current.flyTo([parseFloat(latitude), parseFloat(longitude)], 12) // Adjust zoom level as needed
     }
+  }, [selectedFacility, facilitiesData])
+
+  useEffect(() => {
+    console.log('Selected facility:', selectedFacility)
   }, [selectedFacility])
 
   // Component to control the map behavior
@@ -54,10 +81,12 @@ const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility
 
     useEffect(() => {
       if (selectedFacility) {
-        const { latitude, longitude } = selectedFacility
-        map.flyTo([latitude, longitude], 12) // Focus on the selected facility
+        const { latitude, longitude } = facilitiesData.find(
+          (facility: Facility) => facility.Facility_Name === selectedFacility
+        )!
+        map.flyTo([parseFloat(latitude), parseFloat(longitude)], 12) // Focus on the selected facility
       }
-    }, [selectedFacility, map])
+    }, [map])
 
     return null // This component doesn't render anything
   }
@@ -77,8 +106,8 @@ const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility
       center={[1.286389, 38.817223]} // Nairobi's coordinates as the default center
       zoom={6}
       style={mapStyle}
-    //   scrollWheelZoom={true}
-      //   whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+      //   scrollWheelZoom={true}
+        // whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
       maxBounds={kenyaBounds}
       maxBoundsViscosity={1.0}
     >
@@ -93,18 +122,18 @@ const KenyaMap: React.FC<{ selectedFacility: any | null }>  = ({selectedFacility
       <MapController />
 
       {/* <GeoJSON data={facilities}/> */}
-      {facilities.map((facility) => (
+      {facilitiesData.map((facility) => (
         <Marker
-          key={facility.id}
-          position={[facility.latitude, facility.longitude]}
+          key={facility.code}
+          position={[parseFloat(facility.latitude), parseFloat(facility.longitude)]}
           icon={myIcon}
         >
           <Popup>
-            <strong>{facility.name}</strong>
+            <strong>{facility.Facility_Name}</strong>
             <br />
-            Capacity: {facility.cold_chain_capacity} liters
+            Capacity: {facility.capacity_in_litres} liters
             <br />
-            Available Space: {facility.available_space} liters
+            Available Space: {facility.Available_Cold_Boxes} liters
           </Popup>
         </Marker>
       ))}
