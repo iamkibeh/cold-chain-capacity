@@ -145,7 +145,7 @@ const FilteredDropdowns: React.FC<{
             liters
           </p>
 
-          <p className='text-sm text-gray-600'>
+          {/* <p className='text-sm text-gray-600'>
             Percentage of Operational Facilities:{' '}
             {(
               (facilities.filter(
@@ -159,7 +159,7 @@ const FilteredDropdowns: React.FC<{
               100
             ).toFixed(2)}
             %
-          </p>
+          </p> */}
 
           <p className='text-sm text-gray-600'>
             Facilities with Electricity {'>'} 8 hrs/day:{' '}
