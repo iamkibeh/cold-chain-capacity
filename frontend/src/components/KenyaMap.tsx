@@ -16,6 +16,7 @@ import {
   useMapEvent,
   // GeoJSON,
 } from 'react-leaflet'
+import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 import { LatLngBoundsExpression } from 'leaflet'
@@ -23,24 +24,6 @@ import marker from '../assets/images/medicine.png'
 import blueMarker from '../assets/images/facility-logo.jpeg'
 import { Facility } from '@/types/FacilityData'
 
-const facilities = [
-  {
-    id: 1,
-    name: 'Facility A',
-    latitude: -1.2921,
-    longitude: 36.8219,
-    cold_chain_capacity: 500,
-    available_space: 200,
-  },
-  {
-    id: 2,
-    name: 'Facility B',
-    latitude: -0.5143,
-    longitude: 37.4527,
-    cold_chain_capacity: 300,
-    available_space: 100,
-  },
-]
 
 const KenyaMap: React.FC<{
   facilitiesData: Facility[]
